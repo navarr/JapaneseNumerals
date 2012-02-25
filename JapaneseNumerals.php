@@ -112,7 +112,7 @@ class JapaneseNumerals
             '九', // 9
             '十', // 10
         );
-        if($flags & 1 == 1)
+        if($flags & JapaneseNumerals::USE_FORMAL == JapaneseNumerals::USE_FORMAL)
         {
             $numbers[1] = '壱'; // Formal 1
             $numbers[2] = '弐'; // Formal 2
@@ -126,7 +126,7 @@ class JapaneseNumerals
     
     public static function getZero($flags)
     {
-        if($flags & 1 == 1) return '零'; // Formal 0
+        if($flags & JapaneseNumerals::USE_FORMAL == JapaneseNumerals::USE_FORMAL) return '零'; // Formal 0
         return '〇'; // Informal 0
     }
     
@@ -153,7 +153,7 @@ class JapaneseNumerals
             "不可思議", // 10^64
             "無量大数" // 10^68 (as high as quartets currently go?)
         );
-        if($flags & 2 == 2) $quartets[1] = '萬'; // Older formal character for 10,000
+        if($flags & JapaneseNumerals::USE_FORMAL_TEN_THOUSAND == JapaneseNumerals::USE_FORMAL_TEN_THOUSAND) $quartets[1] = '萬'; // Older formal character for 10,000
         return $quartets;
     }
 }
