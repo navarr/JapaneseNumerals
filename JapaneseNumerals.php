@@ -2,12 +2,8 @@
 
 class JapaneseNumerals
 {
-    public static $USE_FORMAL = 1;
-    public static $USE_FORMAL_TEN_THOUSAND = 2;
-    
-    protected static $quartets = array(
-            
-    );
+    const USE_FORMAL = 1;
+    const USE_FORMAL_TEN_THOUSAND = 2;
     
     /**
         Convert a number from Arabic Format to Traditional Japanese Numbers
@@ -97,7 +93,7 @@ class JapaneseNumerals
         
     }
     
-    public static function getNumbers($flags)
+    protected static function getNumbers($flags)
     {
         $numbers = array(
             '', // Blank for ease of use.  Going to use Array Index to grab the proper character
@@ -124,13 +120,13 @@ class JapaneseNumerals
         return $numbers;
     }
     
-    public static function getZero($flags)
+    protected static function getZero($flags)
     {
         if($flags & JapaneseNumerals::USE_FORMAL == JapaneseNumerals::USE_FORMAL) return '零'; // Formal 0
         return '〇'; // Informal 0
     }
     
-    public static function getQuartets($flags)
+    protected static function getQuartets($flags)
     {
         // Adding to this array should have no negative consequences
         $quartets = array(
