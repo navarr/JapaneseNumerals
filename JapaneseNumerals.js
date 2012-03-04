@@ -1,3 +1,4 @@
+// #dependency From function requires https://github.com/silentmatt/javascript-biginteger/blob/master/biginteger.js
 var JapaneseNumerals = new function()
 {
     this.USE_FORMAL = 1;
@@ -81,6 +82,76 @@ var JapaneseNumerals = new function()
 		return data_string;
 	};
 	
+    this.from = function(num)
+    {
+        var definitionTable = this.getDefinitionTables();
+        var numbers = definitionTable.numbers;
+        var myriads = definitionTable.myriads;
+        var len = num.length;
+        var myriad = 0;
+        var temp = 1;
+        var temp2 = 0;
+        var result = BigInteger(0);
+        
+        for(var i = 0;i < len;++i)
+        {
+            var parse = num.substr(i,1);
+            if(numbers[parse] !== undefined && parseInt(numbers[parse],10) < 10) { temp = parseInt(numbers[parse],10); temp2 = temp; }
+            else if(numbers[parse] !== undefined)
+            {
+                myriad += temp * parseInt(numbers[parse],10);
+                temp = 1;
+                temp2 = 0;
+            }
+            else
+            {
+                for(var j in myriads)
+                {
+                    if(j.substr(0,1) == parse)
+                    {
+                        i += j.length - 1;
+                        if(myriad == 0) myriad = temp;
+                        result = result.add(BigInteger(myriad).multiply(BigInteger(myriads[j])));
+                        myriad = 0;
+                        temp = 1;
+                        temp2 = 0;
+                        break;
+                    }
+                }
+            }
+        }
+        result = result.add(temp2);
+        result = result.add(myriad);
+        
+        return result.toString();
+    };
+    
+    this.getDefinitionTables = function()
+    {
+        var temp = this.getNumbers();
+        temp[0] = this.getZero();
+        var numbers = {};
+        for(var i in temp)
+        {
+            numbers[temp[i]] = i;
+        }
+        numbers["壱"] = "1";
+        numbers["弐"] = "2";
+        numbers["参"] = "3";
+        numbers["拾"] = "10";
+        numbers[this.getZero(1)] = "0";
+        
+        temp = this.getQuartets();
+        var quartets = {};
+        for(var i in temp)
+        {
+            if(temp[i] === "") continue;
+            quartets[temp[i]] = BigInteger(1).exp10(i*4).toString();
+        }
+        
+        return { "numbers": numbers, "myriads": quartets };
+    };
+    
 	this.getNumbers = function(flags)
 	{
 		if(flags === undefined) flags = 0;
