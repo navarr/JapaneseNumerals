@@ -82,7 +82,7 @@
 			
 			if(updateState && history.pushState)
 			{
-				history.pushState("",document.title,"/en2jp/?number=" + num + "&formal=" + flag);
+				history.pushState("",document.title,"/JapaneseNumerals/?number=" + num + "&formal=" + flag);
 			}
 		}
 		addEvent(window, 'popstate', function(event) {
