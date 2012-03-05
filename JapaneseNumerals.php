@@ -98,8 +98,77 @@ class JapaneseNumerals {
 		return $data_string;
 		
 	}
+	/**
+	Convert a number from Traditional Japanese Numbers to Arabic Format
+	This function requires the bcmath extension.
 	
-	protected static function getNumbers($flags) {
+	@param	string	Japanese Numeral
+	@return string  Arabic Numeral
+	*/
+	public static function from($num) {
+		$definitionTable = JapaneseNumerals::getDefinitionTables();
+		$numbers = $definitionTable['numbers'];
+		$myriads = $definitionTable['myriads'];
+		$len = mb_strlen($num);
+		$myriad = 0;
+		$temp = 1;
+		$temp2 = 0;
+		$result = "0";
+		mb_internal_encoding("UTF-8");
+		for($i = 0;$i < $len;++$i) {
+			$parse = JapaneseNumerals::substr_unicode($num,$i,1);
+			if(isset($numbers[$parse]) && intval($numbers[$parse]) < 10) {
+				$temp = intval($numbers[$parse]);
+				$temp2 = $temp;
+			} elseif(isset($numbers[$parse])) {
+				$myriad += $temp * intval($numbers[$parse]);
+				$temp = 1;
+				$temp2 = 0;
+			} else {
+				foreach($myriads as $j => $v) {
+					if(JapaneseNumerals::substr_unicode($j,0,1) == $parse) {
+						$i += mb_strlen($j);
+						if($myriad == 0) $myriad = $temp;
+						$result = bcadd($result,bcmul($myriad,$v));
+						$myriad = 0;
+						$temp = 1;
+						$temp2 = 0;
+						break;
+					}
+				}
+			}
+		}
+		$result = bcadd($result,$temp2);
+		$result = bcadd($result,$myriad);
+		
+		return $result;
+	}
+	
+	public static function getDefinitionTables() {
+		$temp = JapaneseNumerals::getNumbers();
+		$temp[0] = JapaneseNumerals::getZero();
+		$numbers = array();
+		foreach($temp as $arabic => $kanji) {
+			$numbers[$kanji] = $arabic;
+		}
+		$numbers["壱"] = "1";
+		$numbers["弐"] = "2";
+		$numbers["参"] = "3";
+		$numbers["拾"] = "10";
+		$numbers[JapaneseNumerals::getZero(1)] = "0";
+		
+		$temp = JapaneseNumerals::getQuartets();
+		$quartets = array();
+		foreach($temp as $key => $kanji) {
+			if($kanji == "") continue;
+			$quartets[$kanji] = bcpow(10,$key * 4);
+		}
+		$quartets["萬"] = "10000";
+		
+		return array("numbers" => $numbers, "myriads" => $quartets);
+	}
+	
+	protected static function getNumbers($flags = 0) {
 		$numbers = array(
 			'', // Blank for ease of use.  Going to use Array Index to grab the proper character
 			'一', // 1
@@ -124,13 +193,13 @@ class JapaneseNumerals {
 		return $numbers;
 	}
 	
-	protected static function getZero($flags) {
+	protected static function getZero($flags = 0) {
 		if ($flags & JapaneseNumerals::USE_FORMAL == JapaneseNumerals::USE_FORMAL)
 			return '零'; // Formal 0
 		return '〇'; // Informal 0
 	}
 	
-	protected static function getQuartets($flags) {
+	protected static function getQuartets($flags = 0) {
 		// Adding to this array should have no negative consequences
 		$quartets = array(
 			"", // Default Quartet has no symbol
@@ -155,5 +224,9 @@ class JapaneseNumerals {
 		if ($flags & JapaneseNumerals::USE_FORMAL_TEN_THOUSAND == JapaneseNumerals::USE_FORMAL_TEN_THOUSAND)
 			$quartets[1] = '萬'; // Older formal character for 10,000
 		return $quartets;
+	}
+	
+	final protected static function substr_unicode($str, $s, $l = null) {
+    	return join("", array_slice(preg_split("//u", $str, -1, PREG_SPLIT_NO_EMPTY), $s, $l));
 	}
 }
