@@ -128,6 +128,7 @@ var JapaneseNumerals = new function () {
 				if (temp[i] === "") continue;
 				quartets[temp[i]] = BigInteger(1).exp10(i * 4).toString();
 			}
+			quartets["萬"] = "10000";
 
 			return {
 				"numbers": numbers,
