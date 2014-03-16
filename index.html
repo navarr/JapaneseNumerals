@@ -1,97 +1,138 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Japanese Conversion - From 0.infinity to 999999999999999999999999999999999999999999999999999999999999999999999999</title>
-		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-		<style>
-			html,body { margin: 0px; padding: 0px; }
-			html { text-align: center; }
-			* { position: relative; box-sizing: border-box; background: #DDDDDD; color: #111111; font-family: sans-serif; }
-			input { border-width: 0 0 2px 0; text-align: center; }
-			::-webkit-input-placeholder, :-moz-placeholder { text-align: center; }
-			#japanese { font-size: 48pt; display: block; text-align: center; }
-			#error,#error2 { color: red; text-align: center; }
-			#formal-lbl { cursor: pointer; margin-left: -13px; }
-			abbr { border-bottom: 1px dotted #111111; }
-		</style>
-	</head>
-	<body>
-		<a href="https://github.com/navarr/JapaneseNumerals" style="position: absolute; top: 0; right: 0; border: 0; z-index:5;"><img style="border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
-		<br /><br /><br />
-		<span id="japanese"></span>
-		<br />
-		<input id="arabic" placeholder="type a number here" onkeyup="updateNum()" disabled /><br /><br />
-		<label id="formal-lbl"><input type="checkbox" id="formal" onchange="updateNum();" /> <abbr title="Formal/Legal Numbers">大字</abbr></label><br />
-		<span style="display:none;" id="error">Numbers Only, Please</span>
-		<span style="display:none;" id="error2">We do not support numbers that big!</span>
-	</body>
-	<script src="https://raw.github.com/navarr/JapaneseNumerals/master/JapaneseNumerals.js"></script>
-	<script>
-		function addEvent(el, type, fn) {
-			if (el && el.nodeName || el === window) {
-				el.addEventListener(type, fn, false);
-			} else if (el && el.length) {
-				for (var i = 0; i < el.length; i++) {
-					addEvent(el[i], type, fn);
-				}
-			}
-		}
-		function loadHash()
-		{
-			var ra = document.location.search.substr(1).split("&");
-			var params = {};
-			for(val in ra)
-			{
-				var ra2 = ra[val].split("=");
-				console.log(ra2);
-				params[ra2[0]] = ra2[1];
-			}
-			if(params.number != undefined) document.getElementById("arabic").value = params.number;
-			if(params.formal != undefined && params.formal != 0) document.getElementById("formal").checked = true;
-		}
-		function updateNum(updateState)
-		{
-			var left,right,num;
-			if(updateState === undefined) updateState = true;
-			num = document.getElementById("arabic").value;
-			num = num.replace(/,/g,"");
-			if(num.replace(/[0-9]*[.]?[0-9]*/,"") !== "")
-			{
-				document.getElementById("error").style.display = "block";
-				return;
-			}
-			document.getElementById("error").style.display = "none";
-			if(num.indexOf(".") === -1) left = num;
-			else
-			{
-				left = num.substr(0,num.indexOf("."));
-				right = num.substr(num.indexOf(".")+1);
-			}
-			
-			if(left.length > 72)
-			{
-				document.getElementById("error2").style.display = "block";
-				return;
-			}
-			document.getElementById("error2").style.display="none";
-			
-			var flag = 0;
-			if(document.getElementById("formal").checked) flag = 1;
-			
-			document.getElementById("japanese").innerHTML = JapaneseNumerals.to(left,right,flag);
-			
-			if(updateState && history.pushState)
-			{
-				history.pushState("",document.title,"/JapaneseNumerals/?number=" + num + "&formal=" + flag);
-			}
-		}
-		addEvent(window, 'popstate', function(event) {
-			loadHash();
-			updateNum(false);
-		});
-		document.getElementById("arabic").disabled = false;
-		document.getElementById("arabic").focus();
-		loadHash();
-		updateNum(false);
-	</script>
+<head>
+    <title>Japanese Conversion - From 0.infinity to
+        999999999999999999999999999999999999999999999999999999999999999999999999</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            text-align: center;
+        }
+
+        * {
+            position: relative;
+            box-sizing: border-box;
+            background: #DDDDDD;
+            color: #111111;
+            font-family: sans-serif;
+        }
+
+        input {
+            border-width: 0 0 2px 0;
+            text-align: center;
+        }
+
+        ::-webkit-input-placeholder, :-moz-placeholder {
+            text-align: center;
+        }
+
+        #japanese {
+            font-size: 48pt;
+            display: block;
+            text-align: center;
+        }
+
+        #error, #error2 {
+            color: red;
+            text-align: center;
+        }
+
+        #formal-lbl {
+            cursor: pointer;
+            margin-left: -13px;
+        }
+
+        abbr {
+            border-bottom: 1px dotted #111111;
+        }
+
+        #ribbon {
+            position: absolute;
+            top: 0;
+            right: 0;
+            border: 0;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+<a href="https://github.com/navarr/JapaneseNumerals"
+   id="border"><img style="border: 0;"
+                    src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"
+                    alt="Fork me on GitHub"/></a>
+<br/><br/><br/>
+<span id="japanese"></span>
+<br/>
+<input id="arabic" placeholder="type a number here" onkeyup="updateNum()" disabled/><br/><br/>
+<label id="formal-lbl"><input type="checkbox" id="formal" onchange="updateNum();"/> <abbr title="Formal/Legal Numbers">大字</abbr></label><br/>
+<span style="display:none;" id="error">Numbers Only, Please</span>
+<span style="display:none;" id="error2">We do not support numbers that big!</span>
+</body>
+<script src="./JapaneseNumerals.js"></script>
+<script>
+    function addEvent(el, type, fn) {
+        if (el && el.nodeName || el === window) {
+            el.addEventListener(type, fn, false);
+        } else if (el && el.length) {
+            for (var i = 0; i < el.length; i++) {
+                addEvent(el[i], type, fn);
+            }
+        }
+    }
+    function loadHash() {
+        var ra = document.location.search.substr(1).split("&");
+        var params = {};
+        for (var val in ra) {
+            var ra2 = ra[val].split("=");
+            console.log(ra2);
+            params[ra2[0]] = ra2[1];
+        }
+        if (params.number != undefined) document.getElementById("arabic").value = params.number;
+        if (params.formal != undefined && params.formal != 0) document.getElementById("formal").checked = true;
+    }
+    function updateNum(updateState) {
+        var left, right, num;
+        if (updateState === undefined) updateState = true;
+        num = document.getElementById("arabic").value;
+        num = num.replace(/,/g, "");
+        if (num.replace(/[0-9]*[.]?[0-9]*/, "") !== "") {
+            document.getElementById("error").style.display = "block";
+            return;
+        }
+        document.getElementById("error").style.display = "none";
+        if (num.indexOf(".") === -1) left = num;
+        else {
+            left = num.substr(0, num.indexOf("."));
+            right = num.substr(num.indexOf(".") + 1);
+        }
+
+        if (left.length > 72) {
+            document.getElementById("error2").style.display = "block";
+            return;
+        }
+        document.getElementById("error2").style.display = "none";
+
+        var flag = 0;
+        if (document.getElementById("formal").checked) flag = 1;
+
+        document.getElementById("japanese").innerHTML = JapaneseNumerals.to(left, right, flag);
+
+        if (updateState && history.pushState) {
+            history.pushState("", document.title, "/JapaneseNumerals/?number=" + num + "&formal=" + flag);
+        }
+    }
+    addEvent(window, 'popstate', function (event) {
+        loadHash();
+        updateNum(false);
+    });
+    document.getElementById("arabic").disabled = false;
+    document.getElementById("arabic").focus();
+    loadHash();
+    updateNum(false);
+</script>
 </html>
