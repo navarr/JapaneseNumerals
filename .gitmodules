@@ -1,0 +1,4 @@
+[submodule "JapaneseNumerals.java"]
+	path = JapaneseNumerals.java
+	url = git@github.com:navarr/JapaneseNumerals.java.git
+	branch = master
