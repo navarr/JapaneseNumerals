@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * For an up-to-date PHP experience,
+ * Please see instead https://packagist.org/packages/navarr/japanese-numerals
+ */
+
 class JapaneseNumerals
 {
     const USE_FORMAL = 1;
